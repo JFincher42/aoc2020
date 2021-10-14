@@ -25,51 +25,39 @@ def part1(numbers):
 
     return steps[0] * steps[2]
 
-
-def count_paths(numbers, index):
-
-    total_paths = 1
-    while index < len(numbers):
-
-        # How many ways out from here
-        paths_out = [0,0,0]
-        for i in range(3):
-            if numbers[index]+i+1 in numbers:
-                paths_out[i] = 1
-
-        if sum(paths_out) == 3:
-            # Now we need to figure out every path out
-            total_paths += count_paths(numbers, index+1)
-            total_paths += count_paths(numbers, index+2)
-            total_paths += count_paths(numbers, index+3)
-            index += 3
-
-        elif sum(paths_out) == 2:
-            if paths_out[0]:
-                total_paths += count_paths(numbers, index+1)
-            if paths_out[1]:
-                total_paths += count_paths(numbers, index+2)
-            if paths_out[2]:
-                total_paths += count_paths(numbers, index+3)
-            index += 2
-
-        # Only one way out, just keep looping
-        else:
-            index += 1
-
-    return total_paths
-
-
 def part2(numbers):
+    # First, sort the numbers
     numbers.append(0)
-    numbers.append(max(numbers)+3)
-    numbers.sort()
+    numbers = sorted(numbers)
 
-    return count_paths(numbers, 0)
+    # Get the last item
+    last_plug = max(numbers)
+
+    # Setup a blank dict to hold the counts
+    path_count = dict.fromkeys(numbers, 0)
+    path_count[last_plug+3] = 0
+    path_count[0] = 1
+
+    # Now we can start to build 
+    current_plug = 0
+
+    while current_plug < last_plug:
+        if current_plug in numbers:
+            current_count = path_count[current_plug]
+            if current_plug+1 in numbers:
+                path_count[current_plug+1] += current_count
+            if current_plug+2 in numbers:
+                path_count[current_plug+2] += current_count
+            if current_plug+3 in numbers:
+                path_count[current_plug+3] += current_count
+
+        current_plug += 1
+
+    return path_count[last_plug]
 
 if __name__ == "__main__":
 
-    with open(root_path / "sample2", "r") as f:
+    with open(root_path / "input", "r") as f:
         numbers = [int(line) for line in f.readlines()]
 
     print(f"Part 1: Number: {part1(numbers)}")
