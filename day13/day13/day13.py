@@ -20,7 +20,9 @@ def part1(earliest, busses):
 
 def part2(bus_times):
 
-    current_time = 99999999999984
+
+    # current_time = 100000000000080
+    current_time = 0
     done = False
 
     while not done:
@@ -35,8 +37,26 @@ def part2(bus_times):
         done = (fit == len(bus_times))
         
     return current_time
-
         
+def part2_redux(bus_times):
+
+    # The idea here is to combine everything pairwise
+    # Start with the first one
+    # Combine it with the next one
+    # Put that answer into current_bus_time
+    # Then combine it with the next one
+    
+    current_bus_time = bus_times[0]
+    timestamp = 0
+
+    for bus_time in bus_times[1:]:
+        # Find the next time that work for current_bus_time and this one
+        while ((timestamp + bus_time[1]) % bus_time[0]):
+            timestamp += current_bus_time[0]
+        current_bus_time = (current_bus_time[0] * bus_time[0], timestamp)
+
+    return timestamp
+
 def parse_line(line):
     busses = []
     for bus in line.split(","):
@@ -66,4 +86,5 @@ if __name__ == "__main__":
         bus_times = parse_times(bus_line)
 
     print(f"Part 1: Answer: {part1(earliest, busses)}")
-    print(f"Part 2: Answer: {part2(bus_times)}")
+    # print(f"Part 2: Answer: {part2(bus_times)}")
+    print(f"Part 2 Redux: Answer: {part2_redux(bus_times)}")
