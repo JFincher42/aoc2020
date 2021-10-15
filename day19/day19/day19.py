@@ -51,11 +51,17 @@ def part1(lines, rules):
 
 def part2(lines, rules):
 
-    print(f"Rule 8: {rules[8]}")
-    print(f"Rule 11: {rules[11]}")
+    # print(f"Rule 8: {rules[8]}")
+    # print(f"Rule 11: {rules[11]}")
 
+    rules[8] = "(" + rules[8] + ")+"
+    rules[11] = rules[8] + "(" + rules[31] + ")+"
 
-    return -1
+    rules = convert_rules(line_rules)
+
+    # return -1
+    rule = "^" + rules[0] + "$"
+    return sum(1 for line in lines if re.match(rule, line))
 
 
 def parse_rules(lines):
