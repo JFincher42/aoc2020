@@ -10,6 +10,7 @@ class Tile:
         self.lines = lines
         self.number = number
         self.neighbors = [None, None, None, None]
+        self.block = None
         self.calc_edges()
 
     def calc_edges(self):
@@ -105,20 +106,20 @@ class Tile:
         # Top --> right, right --> bottom
         # Bottom --> left, left --> top
 
-        new_tile = [["."]*10]*10
+        new_tile = [["." for i in range(10)] for j in range(10)]
         for i in range(10):
             for j in range(10):
-                new_tile[j][2-i] = self.lines[i][j]
+                new_tile[j][9-i] = self.lines[i][j]
 
         for i in range(10):
             self.lines[i] = "".join(new_tile[i])
         self.calc_edges()
 
     def rotate_cc(self):
-        new_tile = [["."]*10]*10
+        new_tile = [["." for i in range(10)] for j in range(10)]
         for i in range(10):
             for j in range(10):
-                new_tile[2-j][i] = self.lines[i][j]
+                new_tile[9-j][i] = self.lines[i][j]
 
         for i in range(10):
             self.lines[i] = "".join(new_tile[i])
@@ -142,7 +143,17 @@ class Tile:
 
     def count_neighbors(self):
         self.neighbor_count = sum([1 for n in self.neighbors if n])
-        
+
+    def inner_block(self):
+        """ Returns a two-D list of the tile minus the borders
+        """ 
+        if not self.block:
+            self.block = []       
+            for i in range(1, len(self.lines)-1):
+                block_line = [self.lines[i][x] for x in range(1,len(self.lines[i])-1)]
+                self.block.append(block_line)
+
+        return self.block
 
 def build_tiles(lines):
     # Keep all the tiles in a list
@@ -198,11 +209,23 @@ def part2(lines):
     tiles = build_tiles(lines)
     print(len(tiles))
 
-    # Now we can arrange them - find the first corner
+    # Now we can arrange them - find a corner
     top_left_corner = None
     for tile in tiles:
         if tile.neighbor_count == 2:
             top_left_corner = tile
+            break
+
+    # Let's get this rotated so the right(3) and bottom edges(1) are populated
+    if top_left_corner.neighbors[1] and top_left_corner.neighbors[2]:
+        top_left_corner.rotate_cc()
+    elif top_left_corner.neighbors[3] and top_left_corner.neighbors[0]:
+        top_left_corner.rotate_c()
+    elif top_left_corner.neighbors[2] and top_left_corner.neighbors[0]:
+        top_left_corner.rotate_c()
+        top_left_corner.rotate_c()
+
+    
 
     # Now we can loop and build the 12x12 tile grid
     tile_grid = [[None]*12]*12
@@ -219,14 +242,8 @@ if __name__ == "__main__":
 
     tiles = build_tiles(lines)
     pprint.pprint(tiles[0].lines)
-    tiles[0].flip_h()
-    pprint.pprint(tiles[0].lines)
-    tiles[0].flip_v()
-    pprint.pprint(tiles[0].lines)
-    tiles[0].rotate_c()    
-    pprint.pprint(tiles[0].lines)
-    tiles[0].rotate_cc()    
-    pprint.pprint(tiles[0].lines)
+
+    pprint.pprint(tiles[0].inner_block())
 
 
     print(f"Part 1: Answer: {part1(lines)}")
