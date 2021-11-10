@@ -46,17 +46,46 @@ def simplify(allergens):
 
 def has_multiple_ingredients(allergens):
     multiple_ingredients = False
-    for _, ingredient_set in allergens:
+    for _, ingredient_set in allergens.items():
         multiple_ingredients = multiple_ingredients or len(ingredient_set) > 1
     return multiple_ingredients
 
 
-def part1(allergens):
-    simple_allergens = simplify(allergens)
+def part1(p_allergens, foods):
+    simple_allergens = simplify(p_allergens)
+
+    # Get the list of allergens
     allergens = list(simple_allergens.keys())
+
+    # Generate a complete list of the ingredients containing allergens
+    all_ingredients = set()
     for allergen in allergens:
-        if len(allergens[allergen]) == 1:
-            pass
+        all_ingredients = all_ingredients.union(simple_allergens[allergen])
+
+    # Now get the food lists
+    all_foods = []
+    for food in foods:
+        ingredients = set()
+        processing_ingredients = True
+        for ing in food.split():
+            if ing == "(contains":
+                break
+            else:
+                ingredients.add(ing)
+        all_foods.append(ingredients)
+
+    # Now remove everything in all_ingredients from the foods
+    for food in all_foods:
+        for ing in all_ingredients:
+            if ing in food:
+                food.remove(ing)
+
+    # Now count them
+    count = 0
+    for food in all_foods:
+        count += len(food)
+
+    return count
 
 
 def part2():
@@ -65,11 +94,11 @@ def part2():
 
 if __name__ == "__main__":
 
-    with open(root_path / "sample", "r") as f:
+    with open(root_path / "input", "r") as f:
         lines = [line.strip() for line in f.readlines()]
 
     allergens = process_lines(lines)
     # pprint(allergens)
 
-    print(f"Part 1: Answer: {part1(allergens)}")
+    print(f"Part 1: Answer: {part1(allergens, lines)}")
     print(f"Part 2: Answer: {part2()}")
