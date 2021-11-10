@@ -88,8 +88,11 @@ def part1(p_allergens, foods):
     return count
 
 
-def part2():
-    pass
+def part2(allergens):
+    simple_allergens = simplify(allergens)
+
+    pprint(simple_allergens)
+    return 0
 
 
 if __name__ == "__main__":
@@ -101,4 +104,4 @@ if __name__ == "__main__":
     # pprint(allergens)
 
     print(f"Part 1: Answer: {part1(allergens, lines)}")
-    print(f"Part 2: Answer: {part2()}")
+    print(f"Part 2: Answer: {part2(allergens)}")

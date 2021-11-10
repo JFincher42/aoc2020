@@ -1,0 +1,13 @@
+{
+    "dairy": {"lmxt"},
+    "eggs": {"rggkbpj"},
+    "fish": {"mxf"},
+    "peanuts": {"gpxmf"},
+    "sesame": {"nmtzlj"},
+    "shellfish": {"dlkxsxg"},
+    "soy": {"fvqg"},
+    "wheat": {"dxzq"},
+}
+
+
+lmxt, rggkbpj, mxf, gpxmf, nmtzlj, dlkxsxg, fvqg, dxzq
