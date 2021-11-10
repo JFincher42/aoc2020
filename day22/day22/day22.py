@@ -4,7 +4,7 @@ import pathlib
 from pprint import pprint
 
 root_path = pathlib.Path.home() / "git" / "aoc2020" / "day22"
-configs = []
+
 
 def score(hand):
     return_score = 0
@@ -33,7 +33,7 @@ def part1(hand1, hand2):
 
 
 def play_rcombat(hand1, hand2):
-    global configs
+    configs = []
     while len(hand1) > 0 and len(hand2) > 0:
         # Check for previous configs
         hash1 = hash(tuple(hand1))
@@ -87,9 +87,9 @@ if __name__ == "__main__":
     with open(root_path / "hand2", "r") as f:
         hand2 = [int(line.strip()) for line in f.readlines()]
 
-    sample_hand1 = [9,2,6,3,1]
-    sample_hand2 = [5,8,4,7,10]
+    sample_hand1 = [9, 2, 6, 3, 1]
+    sample_hand2 = [5, 8, 4, 7, 10]
 
     print(f"Part 1: Answer: {part1(hand1[:], hand2[:])}")
-    print(f"Part 2: Answer: {part2(sample_hand1[:], sample_hand2[:])}")
-    # print(f"Part 2: Answer: {part2(hand1[:], hand2[:])}")
+    # print(f"Part 2: Answer: {part2(sample_hand1[:], sample_hand2[:])}")
+    print(f"Part 2: Answer: {part2(hand1[:], hand2[:])}")
