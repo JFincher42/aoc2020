@@ -1,10 +1,8 @@
-# AOC 2020 Day 18
+# AOC 2020 Day 24
 
 import pathlib
 
-root_path = pathlib.Path.home() / "git" / "aoc2020" / "day19" / "day19"
-
-
+root_path = pathlib.Path.home() / "git" / "aoc2020" / "day24"
 
 
 def part1(lines):
