@@ -25,26 +25,10 @@ class Tile:
         left_edge = ""
         right_edge = ""
         for i in range(10):
-            if self.lines[0][i] == "#":
-                top_edge += "1"
-            else:
-                top_edge += "0"
-
-            if self.lines[9][i] == "#":
-                bottom_edge += "1"
-            else:
-                bottom_edge += "0"
-
-            if self.lines[i][0] == "#":
-                left_edge += "1"
-            else:
-                left_edge += "0"
-
-            if self.lines[i][9] == "#":
-                right_edge += "1"
-            else:
-                right_edge += "0"
-
+            top_edge += "1" if self.lines[0][i] == "#" else "0"
+            bottom_edge += "1" if self.lines[9][i] == "#" else "0"
+            left_edge += "1" if self.lines[i][0] == "#" else "0"
+            right_edge += "1" if self.lines[i][9] == "#" else "0"
         self.edges[0] = int(top_edge, base=2)
         self.edges[1] = int(bottom_edge, base=2)
         self.edges[2] = int(left_edge, base=2)
@@ -143,7 +127,7 @@ class Tile:
                 self.neighbors[i % 4] = tile
 
     def count_neighbors(self):
-        self.neighbor_count = sum([1 for n in self.neighbors if n])
+        self.neighbor_count = sum(1 for n in self.neighbors if n)
 
     def inner_block(self):
         """Returns a two-D list of the tile minus the borders"""
@@ -160,7 +144,7 @@ class Tile:
 
 def build_tiles(lines):
     # Keep all the tiles in a list
-    tiles = list()
+    tiles = []
 
     # Each tile consists of:
     # - a line "Tile ####:"
@@ -176,11 +160,8 @@ def build_tiles(lines):
         current_line += 11
         tiles.append(Tile(tile_lines, tile_number))
 
-    # Now we start looking for matches
-
-    current_tile_index = 0
-    while current_tile_index < len(tiles):
-        current_tile = tiles[current_tile_index]
+    for tile_ in tiles:
+        current_tile = tile_
 
         # Loop over every tile
         for tile in tiles:
@@ -190,7 +171,6 @@ def build_tiles(lines):
             current_tile.find_neighbors(tile)
 
         current_tile.count_neighbors()
-        current_tile_index += 1
     return tiles
 
 
@@ -209,6 +189,7 @@ def part1(lines):
 
 
 def part2(lines):
+    # sourcery skip: hoist-statement-from-if, merge-else-if-into-elif, remove-redundant-pass
 
     # First, build our tiles list
     tiles = build_tiles(lines)
@@ -236,17 +217,98 @@ def part2(lines):
     tile_grid[0][0] = top_left_corner
     tiles.remove(top_left_corner)
 
+    i += 1
+
     while len(tiles) > 0:
-        # Are we looking for the tile to the right, or bottom?
-        # i and j are the coordinates of the last set tile
-        # if j == 11, we have finished a row, so we look down from i-1,0
-        # Otherwise, we look right
-        if j == 11:
-            match_to_find = tile_grid[i - 1][0].edges[1]
+        # The tile we are currently looking for is (i,j)
+        # If i=0, then we're at the start of a row - we need to match what's above us
+        #   Which is i-1, j
+        # Otherwise, we match what is to the left
+        #   Which is i, j-1
+
+        if i==0:
+            match_to_find = tile_grid[i][j-1]
+            edge_to_find = 1   # Bottom
         else:
-            match_to_find = tile_grid[i][j].edges[1]
+            match_to_find = tile_grid[i-1][j]    
+            edge_to_find = 3   # Right
 
         # Find the tile which matches this one
+        for tile in tiles:
+            if match_to_find.edges[edge_to_find] in tile.edges:
+                # Found it!
+                # Now to orient it properly
+                if edge_to_find == 1:
+                    # Make the correct edge the top, 0
+                    if match_to_find.edges[edge_to_find] == tile.edges[0]:
+                        pass
+                    elif match_to_find.edges[edge_to_find] == tile.edges[1]:
+                        # Bottom to bottom, flip
+                        tile.flip_h()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[2]:
+                        # Bottom to left, rotate clockwise
+                        tile.rotate_c()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[3]:
+                        # Bottom to right, rotate counter clockwise
+                        tile.rotate_cc()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[4]:
+                        # Bottom to top inverse, flip left to right
+                        tile.flip_v()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[5]:
+                        # Bottom to bottom inverse, rotate twice
+                        tile.rotate_c()
+                        tile.rotate_c()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[6]:
+                        # Bottom to left inverse, rotate clockwise and flip
+                        tile.rotate_c()
+                        #tile.flip_v()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[7]:
+                        # Bottom to right, rotate counter clockwise and flip
+                        tile.rotate_cc()
+                        tile.flip_v()
+
+                else:
+                    # Make the correct edge the left, 2
+                    if match_to_find.edges[edge_to_find] == tile.edges[0]:
+                        # Right to top, rotate cc
+                        tile.rotate_cc()
+                        tile.flip_h()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[1]:
+                        # Right to bottom, rotate c
+                        tile.rotate_c()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[2]:
+                        # Right to left, pass
+                        pass
+                    elif match_to_find.edges[edge_to_find] == tile.edges[3]:
+                        # Right to right, flip left to right
+                        tile.flip_v()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[4]:
+                        # Right to top inverse, rotate cc and flip
+                        tile.rotate_cc()
+                        tile.flip_h()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[5]:
+                        # Right to bottom inverse, rotate c and flip
+                        tile.rotate_c()
+                        tile.flip_h()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[6]:
+                        # Right to left inverse, just flip
+                        tile.flip_h()
+                    elif match_to_find.edges[edge_to_find] == tile.edges[7]:
+                        # Right to right inverse, rotate twice
+                        tile.rotate_cc()
+                        tile.rotate_cc()
+                break
+        
+        tile_grid[i][j] = tile
+        match_to_find = tile
+        tiles.remove(tile)
+        i+=1
+        if i>11:
+            i=0
+            j+=1
+
+    print("Grid built")
+        
 
 
 if __name__ == "__main__":
@@ -262,3 +324,4 @@ if __name__ == "__main__":
 
     print(f"Part 1: Answer: {part1(lines)}")
     print(f"Part 2: Answer: {part2(lines)}")
+ 
