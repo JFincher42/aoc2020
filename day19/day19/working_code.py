@@ -1,7 +1,7 @@
 import re
 
 # process input
-stream = open("day19/sample")
+stream = open("day19/sample2")
 # stream = open("day19/input")
 lines = stream.read()
 data = lines.split("\n\n")

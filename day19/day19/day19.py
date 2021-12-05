@@ -1,4 +1,4 @@
-# AOC 2020 Day 18
+# AOC 2020 Day 19
 
 import pathlib
 import re
@@ -59,40 +59,46 @@ def parse_rules(lines):
 
     rules = {}
 
-    index = 0
-    while lines[index]:
-        rule_number, production_string = lines[index].split(": ")
+    for line in lines:
 
+        rule_number, production_string = line.split(": ")
+
+        # If this is an end state, it will be "a" or "b"
+        # So we just need to grab that
         if '"' in production_string:
             production_string = production_string[1]
 
         rules[int(rule_number)] = production_string
 
-        index += 1
+        # index += 1
 
     return rules
 
 
 if __name__ == "__main__":
 
-    with open(root_path / "input", "r") as f:
+    with open(root_path / "sample2", "r") as f:
         lines = [line.strip() for line in f.readlines()]
 
-    line_rules = parse_rules(lines)
-    rules = convert_rules(line_rules)
+    rule_lines = [x for x in lines if len(x) > 0 and ":" in x]
+    message_lines = [x for x in lines if len(x) > 0 and x[0] in ["a", "b"]]
 
     # Find the first real line
-    index = 0
-    while lines[index]:
-        index += 1
-    index += 1
+    # index = 0
+    # while lines[index]:
+    #     index += 1
+    # index += 1
 
     print(f"Part 1: Answer: {part1(lines[index:], rules)}")
 
     # 8: 42 | 42 8
     # 11: 42 31 | 42 11 31
-    line_rules[8] = "42 | 42 42 | 42 42 42 | 42 42 42 42 | 42 42 42 42 42 | 42 42 42 42 42 42"
-    line_rules[11] = "42 31 | 42 42 31 31 | 42 42 42 31 31 31 | 42 42 42 42 31 31 31 31 | 42 42 42 42 42 31 31 31 31 31 | 42 42 42 42 42 42 31 31 31 31 31 31"
+    line_rules[
+        8
+    ] = "42 | 42 42 | 42 42 42 | 42 42 42 42 | 42 42 42 42 42 | 42 42 42 42 42 42"
+    line_rules[
+        11
+    ] = "42 31 | 42 42 31 31 | 42 42 42 31 31 31 | 42 42 42 42 31 31 31 31 | 42 42 42 42 42 31 31 31 31 31 | 42 42 42 42 42 42 31 31 31 31 31 31"
     rules = convert_rules(line_rules)
 
     print(f"Part 2: Answer: {part2(lines[index:], rules)}")
