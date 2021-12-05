@@ -22,7 +22,7 @@ def convertToRegex(rule, rulesDict):
                         rulesDict[int(num)], rulesDict
                     )
                 returnRule = returnRule + "|"
-            returnRule = returnRule[0 : len(returnRule) - 1]  # get rid of last |
+            returnRule = returnRule[: len(returnRule) - 1]
         else:  # there is no or operator
             nums = rule.split(" ")
             for num in nums:
@@ -51,15 +51,6 @@ def part1(lines, rules):
 
 def part2(lines, rules):
 
-    # print(f"Rule 8: {rules[8]}")
-    # print(f"Rule 11: {rules[11]}")
-
-    rules[8] = "(" + rules[8] + ")+"
-    rules[11] = rules[8] + "(" + rules[31] + ")+"
-
-    rules = convert_rules(line_rules)
-
-    # return -1
     rule = "^" + rules[0] + "$"
     return sum(1 for line in lines if re.match(rule, line))
 
@@ -97,4 +88,11 @@ if __name__ == "__main__":
     index += 1
 
     print(f"Part 1: Answer: {part1(lines[index:], rules)}")
+
+    # 8: 42 | 42 8
+    # 11: 42 31 | 42 11 31
+    line_rules[8] = "42 | 42 42 | 42 42 42 | 42 42 42 42 | 42 42 42 42 42 | 42 42 42 42 42 42"
+    line_rules[11] = "42 31 | 42 42 31 31 | 42 42 42 31 31 31 | 42 42 42 42 31 31 31 31 | 42 42 42 42 42 31 31 31 31 31 | 42 42 42 42 42 42 31 31 31 31 31 31"
+    rules = convert_rules(line_rules)
+
     print(f"Part 2: Answer: {part2(lines[index:], rules)}")
